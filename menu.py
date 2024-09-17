@@ -16,6 +16,8 @@ from string_tools import (
     snake_case_to_title_case
 )
 
+MAX_SUGGESTIONS = 3
+
 def show_main_menu():
     # Show the main menu options
     user_input = select_option("Main Menu", [
@@ -142,13 +144,13 @@ def view_pokemon_stats(pokemon_data):
     Prints the stats of a Pokémon.
     :param pokemon_data: The Pokémon data to display stats for.
     """
-    print_success(f"\nStats for {pokemon_data['name'].capitalize()}:")
-    print(f"Name: {pokemon_data['name'].capitalize()}")
-    print(f"Height: {pokemon_data['height']}")
-    print(f"Weight: {pokemon_data['weight']}")
-    print(f"Base Experience: {pokemon_data['base_experience']}")
-    print(f"Types: {', '.join(snake_case_to_title_case(pt['type']['name']) for pt in pokemon_data['types'])}")
-    print(f"Abilities: {', '.join(snake_case_to_title_case(ability['ability']['name']) for ability in pokemon_data['abilities'])}")
+    print_success(f"\nStats for {pokemon_data["name"].capitalize()}:")
+    print(f"Name: {pokemon_data["name"].capitalize()}")
+    print(f"Height: {pokemon_data["height"]}")
+    print(f"Weight: {pokemon_data["weight"]}")
+    print(f"Base Experience: {pokemon_data["base_experience"]}")
+    print(f"Types: {", ".join(snake_case_to_title_case(pt["type"]["name"]) for pt in pokemon_data["types"])}")
+    print(f"Abilities: {", ".join(snake_case_to_title_case(ability["ability"]["name"]) for ability in pokemon_data["abilities"])}")
 
 
 def view_pokemon_evolution_chain(pokemon_data):
@@ -193,4 +195,4 @@ def get_pokemon_suggestions(input_name):
         return None
 
     # Find the top 3 closest matches based on Levenshtein distance.
-    return sorted(pokemon_cache.keys(), key=lambda name: levenshtein_distance(input_name, name))[:3]
+    return sorted(pokemon_cache.keys(), key=lambda name: levenshtein_distance(input_name, name))[:MAX_SUGGESTIONS]
