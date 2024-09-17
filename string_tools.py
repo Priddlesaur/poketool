@@ -1,31 +1,33 @@
-def get_evolutions(chain_data):
-    """
-    Creates a list of Pokémon names in the evolution chain.
-    :param chain_data: The evolution chain data.
-    :return: A list of Pokémon names in the evolution chain.
-    """
-    # Extract the evolution chain from the response
-    output_chain = []
-    current_pokemon = chain_data["chain"]
-    while current_pokemon:
-        output_chain.append(current_pokemon["species"]["name"])
-        current_pokemon = current_pokemon.get("evolves_to", [])[0] if current_pokemon.get("evolves_to") else None
-
-    # Return the list of Pokémon names in the evolution chain
-    return output_chain
-
-def format_evolution_chain(chain, highlight):
+def format_evolution_chain(chain_data, name_to_highlight):
     """
     Creates a formatted string representing the evolution chain.
-    :param chain: The list of Pokémon names in the evolution chain.
-    :param highlight: The name of the Pokémon to highlight.
-    :return: A formatted string representing the evolution chain.
+    The name of the Pokémon to highlight is displayed in green.
+    :param chain_data: The evolution chain data.
+    :param name_to_highlight: The name of the Pokémon to highlight.
+    :return: A formatted string representing the evolution chain, intended for display in the console.
     """
-    return " -> ".join([f"\033[92m{pokemon.capitalize()}\033[0m" if pokemon == highlight else pokemon.capitalize() for pokemon in chain])
+    # Extract the Pokémon names from the chain data
+    names = []
+    current_pokemon = chain_data.get("chain", {})
+    while current_pokemon:
+        names.append(current_pokemon.get("species", {}).get("name", ""))
+        evolves_to = current_pokemon.get("evolves_to", [])
+        current_pokemon = evolves_to[0] if evolves_to else None
 
-def snake_case_to_title(type_name):
+    # If there are no names, return a message indicating no evolutions
+    if not names:
+        return "This Pokémon has no known evolutions."
+
+    # Create a formatted string with the Pokémon names in the chain
+    return " -> ".join([
+        f"\033[92m{name.capitalize()}\033[0m" if name == name_to_highlight
+        else name.capitalize()
+        for name in names
+    ])
+
+def snake_case_to_title_case(input_string):
     """
-    Formats the Pokémon type name to be more readable.
-    :param type_name: The type name to format.
+    Formats a snake_case string to a Title Case string.
+    :param input_string: The snake_case string to format.
     """
-    return type_name.title().replace("-", " ")
+    return input_string.title().replace("-", " ")

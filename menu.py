@@ -13,7 +13,7 @@ from pokeapi import (
 )
 from string_tools import (
     format_evolution_chain,
-    get_evolutions, snake_case_to_title
+    snake_case_to_title_case
 )
 
 def show_main_menu():
@@ -147,8 +147,8 @@ def view_pokemon_stats(pokemon_data):
     print(f"Height: {pokemon_data['height']}")
     print(f"Weight: {pokemon_data['weight']}")
     print(f"Base Experience: {pokemon_data['base_experience']}")
-    print(f"Types: {', '.join(snake_case_to_title(pt['type']['name']) for pt in pokemon_data['types'])}")
-    print(f"Abilities: {', '.join(snake_case_to_title(ability['ability']['name']) for ability in pokemon_data['abilities'])}")
+    print(f"Types: {', '.join(snake_case_to_title_case(pt['type']['name']) for pt in pokemon_data['types'])}")
+    print(f"Abilities: {', '.join(snake_case_to_title_case(ability['ability']['name']) for ability in pokemon_data['abilities'])}")
 
 
 def view_pokemon_evolution_chain(pokemon_data):
@@ -159,13 +159,11 @@ def view_pokemon_evolution_chain(pokemon_data):
     pokemon_id = pokemon_data["id"]
     pokemon_name = pokemon_data["name"]
 
+    # Fetch the evolution chain for the Pokémon
     evolution_chain = fetch_evolution_chain(pokemon_id)
     if not evolution_chain:
         print_error(f"Evolution chain for {pokemon_name.capitalize()} not found.")
         return
-
-    # Create the chain
-    evolution_chain = get_evolutions(evolution_chain)
 
     # Print the evolution chain
     print_success(f"\n=== Evolution Chain for {pokemon_name.capitalize()} ===")
@@ -182,7 +180,7 @@ def view_pokemon_moves(pokemon_data):
     # Print the moves for the Pokémon
     print_success(f"\n=== Moves for {name.capitalize()} ===")
     for move in moves:
-        print(f"- {snake_case_to_title(move["move"]["name"])}")
+        print(f"- {snake_case_to_title_case(move["move"]["name"])}")
 
 def get_pokemon_suggestions(input_name):
     """
