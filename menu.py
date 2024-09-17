@@ -1,0 +1,193 @@
+import history
+from algorithms import levenshtein_distance
+from command_line_tools import (
+    print_error,
+    print_success,
+    select_option,
+)
+from history import add_to_history_file
+from pokeapi import (
+    fetch_or_get_pokemon_by_name,
+    fetch_evolution_chain,
+    fetch_or_get_pokemon_cache
+)
+from string_tools import (
+    format_evolution_chain,
+    get_evolutions, snake_case_to_title
+)
+
+STR_BACK_TO_MAIN_MENU = "↩ Back to Main Menu"
+
+def show_main_menu():
+    # Show the main menu options
+    user_input = select_option("Main Menu", [
+        ("1", "Search for a Pokemon"),
+        ("2", "View Search History"),
+        ("3", "↩ Exit Application")
+    ])
+
+    # Handle the user input
+    match user_input:
+        case "1":
+            show_pokemon_search_menu()
+        case "2":
+            show_history_selection_menu()
+        case "3":
+            return False
+
+    # Return True to continue running the main menu
+    return True
+
+def show_history_selection_menu():
+    # Generate the history items with index numbers
+    history_items = [(index, item.capitalize()) for index, item in enumerate(history.pokemon_history, start=1)]
+    user_input = select_option("Search History", history_items + [
+        (str(len(history_items) + 1), STR_BACK_TO_MAIN_MENU),
+    ])
+
+    # If the user chooses to go back, return
+    if user_input == str(len(history_items) + 1):
+        return
+
+    # Show the options menu for the selected Pokemon
+    pokemon_name = history.pokemon_history[int(user_input) - 1]
+    pokemon_data = fetch_or_get_pokemon_by_name(pokemon_name)
+    show_pokemon_options_menu(pokemon_data)
+
+def show_pokemon_search_menu():
+    """
+    Finds a Pokemon by name and shows the options menu if the Pokemon is found.
+    """
+    pokemon_name = input("\nEnter the name of the Pokemon you want to find: ").strip().lower()
+    if not pokemon_name:
+        print_error("You didn't enter a Pokemon name.")
+        return
+
+    # Find the Pokemon by name
+    pokemon_data = fetch_or_get_pokemon_by_name(pokemon_name)
+
+    # If the pokemon is not found, suggest a similar name
+    if not pokemon_data:
+        suggestions = get_pokemon_suggestions(pokemon_name)
+
+        # If the pokemon is not found, print an error message
+        print_error(f"Pokemon '{pokemon_name.capitalize()}' not found.")
+
+        # Suggestion choices
+        suggestion_choices = [(str(index + 1), suggestion.capitalize()) for index, suggestion in enumerate(suggestions)]
+
+        # Ask the user to select a suggestion, with
+        # the default option being the back choice
+        input_choice = select_option("Suggestions", suggestion_choices + [
+            (str(len(suggestions) + 1), STR_BACK_TO_MAIN_MENU),
+        ], -1)
+
+        # If the user chooses to go back, return
+        if input_choice == str(len(suggestions) + 1):
+            print("Returning to main menu...")
+            return
+
+        # Fetch the Pokemon data for the selected suggestion
+        pokemon_data = fetch_or_get_pokemon_by_name(suggestions[int(input_choice) - 1])
+
+    # Check one final time if the Pokemon is not found
+    if not pokemon_data:
+        print_error(f"Pokemon '{pokemon_name}' not found!")
+        return
+
+    # Show the options menu for the Pokemon
+    while show_pokemon_options_menu(pokemon_data):
+        pass
+
+def show_pokemon_options_menu(pokemon_data):
+    """
+    Shows the options menu for a Pokemon.
+    :param pokemon_data: The Pokemon data to show the options menu for.
+    :return: True if the options menu should continue, False if the user wants to go back.
+    """
+    pokemon_name = pokemon_data["name"]
+
+    # Add the Pokemon to the history
+    add_to_history_file(pokemon_name)
+
+    # Let the user choose an option until they go back
+    option_index = select_option(f"Options Menu for {pokemon_name.capitalize()}", [
+        ("1", "View Pokemon Stats"),
+        ("2", "View Pokemon Evolution Chain"),
+        ("3", "View Pokemon Moves"),
+        ("4", STR_BACK_TO_MAIN_MENU),
+    ], "4")
+
+    # Handle the selected option
+    match option_index:
+        case "1":
+            view_pokemon_stats(pokemon_data)
+        case "2":
+            view_pokemon_evolution_chain(pokemon_data)
+        case "3":
+            view_pokemon_moves(pokemon_data)
+        case "4" | _:
+            print_success("Returning to Pokemon selection...")
+            return False
+
+    # Return true to continue showing the options menu for this Pokemon
+    return True
+
+def view_pokemon_stats(pokemon_data):
+    """
+    Prints the stats of a Pokemon.
+    :param pokemon_data: The Pokemon data to display stats for.
+    """
+    print_success(f"\nStats for {pokemon_data['name'].capitalize()}:")
+    print(f"Name: {pokemon_data['name'].capitalize()}")
+    print(f"Height: {pokemon_data['height']}")
+    print(f"Weight: {pokemon_data['weight']}")
+    print(f"Base Experience: {pokemon_data['base_experience']}")
+    print(f"Types: {', '.join(snake_case_to_title(pt['type']['name']) for pt in pokemon_data['types'])}")
+    print(f"Abilities: {', '.join(snake_case_to_title(ability['ability']['name']) for ability in pokemon_data['abilities'])}")
+
+
+def view_pokemon_evolution_chain(pokemon_data):
+    """
+    Fetches and prints the evolution chain of a Pokemon by name.
+    :param pokemon_data: The Pokemon data to display the evolution chain for.
+    """
+    pokemon_id = pokemon_data["id"]
+    pokemon_name = pokemon_data["name"]
+
+    evolution_chain = fetch_evolution_chain(pokemon_id)
+    if not evolution_chain:
+        return print_error(f"Evolution chain for {pokemon_name.capitalize()} not found.")
+
+    # Create the chain
+    evolution_chain = get_evolutions(evolution_chain)
+
+    # Print the evolution chain
+    print_success(f"\n=== Evolution Chain for {pokemon_name.capitalize()} ===")
+    print(format_evolution_chain(evolution_chain, pokemon_name))
+
+def view_pokemon_moves(pokemon_data):
+    """
+    Prints the moves of a Pokemon.
+    :param pokemon_data: The Pokemon data to display moves for.
+    """
+    name = pokemon_data["name"]
+    moves = sorted(pokemon_data["moves"], key=lambda move: move["move"]["name"])
+
+    # Print the moves for the Pokemon
+    print_success(f"\n=== Moves for {name.capitalize()} ===")
+    for move in moves:
+        print(f"- {snake_case_to_title(move["move"]["name"])}")
+
+def get_pokemon_suggestions(input_name):
+    """
+    Suggests a Pokemon name based on the input name.
+    :param input_name: The input name to suggest a Pokemon for.
+    """
+    # Get the Pokemon cache
+    pokemon_cache = fetch_or_get_pokemon_cache()
+    if not pokemon_cache:
+        return None
+
+    # Find the top 3 closest matches based on Levenshtein distance.
+    return sorted(pokemon_cache.keys(), key=lambda name: levenshtein_distance(input_name, name))[:3]
