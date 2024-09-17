@@ -16,8 +16,6 @@ from string_tools import (
     get_evolutions, snake_case_to_title
 )
 
-STR_BACK_TO_MAIN_MENU = "↩ Back to Main Menu"
-
 def show_main_menu():
     # Show the main menu options
     user_input = select_option("Main Menu", [
@@ -44,7 +42,7 @@ def show_history_selection_menu():
     back_option = str(len(history_items) + 1)
 
     # Ask the user to select a Pokemon from the history
-    user_input = select_option("Search History", history_items + [(back_option, STR_BACK_TO_MAIN_MENU)])
+    user_input = select_option("Search History", history_items + [(back_option, "↩ Back to Main Menu")])
 
     # If the user chooses to go back, return
     if user_input == back_option:
@@ -80,7 +78,7 @@ def show_pokemon_search_menu():
 
         # Ask the user to select a suggestion, with
         # the default option being the back choice
-        input_choice = select_option("Suggestions", suggestion_choices + [(back_option, STR_BACK_TO_MAIN_MENU)], -1)
+        input_choice = select_option("Suggestions", suggestion_choices + [(back_option, "↩ Back to Main Menu")], -1)
 
         # If the user chooses to go back, return
         if input_choice == back_option:
@@ -115,7 +113,7 @@ def show_pokemon_options_menu(pokemon_data):
         ("1", "View Pokemon Stats"),
         ("2", "View Pokemon Evolution Chain"),
         ("3", "View Pokemon Moves"),
-        ("4", STR_BACK_TO_MAIN_MENU),
+        ("4", "↩ Back to Main Menu"),
     ], "4")
 
     # Handle the selected option
@@ -157,7 +155,8 @@ def view_pokemon_evolution_chain(pokemon_data):
 
     evolution_chain = fetch_evolution_chain(pokemon_id)
     if not evolution_chain:
-        return print_error(f"Evolution chain for {pokemon_name.capitalize()} not found.")
+        print_error(f"Evolution chain for {pokemon_name.capitalize()} not found.")
+        return
 
     # Create the chain
     evolution_chain = get_evolutions(evolution_chain)
