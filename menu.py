@@ -41,12 +41,13 @@ def show_main_menu():
 def show_history_selection_menu():
     # Generate the history items with index numbers
     history_items = [(index, item.capitalize()) for index, item in enumerate(history.pokemon_history, start=1)]
-    user_input = select_option("Search History", history_items + [
-        (str(len(history_items) + 1), STR_BACK_TO_MAIN_MENU),
-    ])
+    back_option = str(len(history_items) + 1)
+
+    # Ask the user to select a Pokemon from the history
+    user_input = select_option("Search History", history_items + [(back_option, STR_BACK_TO_MAIN_MENU)])
 
     # If the user chooses to go back, return
-    if user_input == str(len(history_items) + 1):
+    if user_input == back_option:
         return
 
     # Show the options menu for the selected Pokemon
@@ -69,6 +70,7 @@ def show_pokemon_search_menu():
     # If the pokemon is not found, suggest a similar name
     if not pokemon_data:
         suggestions = get_pokemon_suggestions(pokemon_name)
+        back_option = str(len(suggestions) + 1)
 
         # If the pokemon is not found, print an error message
         print_error(f"Pokemon '{pokemon_name.capitalize()}' not found.")
@@ -78,12 +80,10 @@ def show_pokemon_search_menu():
 
         # Ask the user to select a suggestion, with
         # the default option being the back choice
-        input_choice = select_option("Suggestions", suggestion_choices + [
-            (str(len(suggestions) + 1), STR_BACK_TO_MAIN_MENU),
-        ], -1)
+        input_choice = select_option("Suggestions", suggestion_choices + [(back_option, STR_BACK_TO_MAIN_MENU)], -1)
 
         # If the user chooses to go back, return
-        if input_choice == str(len(suggestions) + 1):
+        if input_choice == back_option:
             print("Returning to main menu...")
             return
 

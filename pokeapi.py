@@ -1,10 +1,12 @@
 import requests
 from requests import HTTPError
 
-# Base URL for the PokeAPI
+# Constants for the PokeAPI
 API_URL = "https://pokeapi.co/api/v2/"
 ALL_POKEMON_ENDPOINT = "pokemon"
+ALL_POKEMON_LIMIT = 2000
 POKEMON_SPECIES_ENDPOINT = "pokemon-species"
+SUCCESS_STATUS_CODE = 200
 
 # Global variable to store the Pokemon cache
 pokemon_cache = None
@@ -21,17 +23,15 @@ def fetch(url, params=None):
         # Make the GET request
         response = requests.get(f"{url}", params=params)
 
-        print(f"GET {response.url} -> {response.status_code}")
-
         # Return None if the request was unsuccessful
-        if response.status_code != 200:
+        if response.status_code != SUCCESS_STATUS_CODE:
             return None
 
         # Return the JSON response
         return response.json()
 
     # Handle connection errors and HTTP errors
-    except requests.exceptions.ConnectionError | HTTPError:
+    except (requests.ConnectionError, HTTPError):
         return None
 
 def fetch_or_get_pokemon_cache():
@@ -69,7 +69,7 @@ def fetch_all_pokemon():
     Fetches a list of all Pokemon from the PokeAPI.
     :return: The JSON response from the API in dictionary format.
     """
-    return fetch(f"{API_URL}{ALL_POKEMON_ENDPOINT}", {"limit": 2000})
+    return fetch(f"{API_URL}{ALL_POKEMON_ENDPOINT}", {"limit": ALL_POKEMON_LIMIT})
 
 def fetch_pokemon_species(pokemon_id):
     """

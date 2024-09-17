@@ -34,7 +34,7 @@ def load_history_file():
     try:
         with open(HISTORY_FILE, "r") as file:
             pokemon_history = list(json.load(file))
-    except FileNotFoundError | json.JSONDecodeError:
+    except (FileNotFoundError, json.JSONDecodeError):
         # If the file is not found or if the file is empty or malformed,
         # initialize the history list to an empty list
         pokemon_history = []
