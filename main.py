@@ -2,7 +2,6 @@ from command_line_tools import print_success
 from history import load_history_file
 from menu import show_main_menu
 
-
 def main():
     print_success("Welcome to the Pokemon Tool!")
 

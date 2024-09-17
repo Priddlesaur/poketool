@@ -8,7 +8,7 @@ ALL_POKEMON_LIMIT = 2000
 POKEMON_SPECIES_ENDPOINT = "pokemon-species"
 SUCCESS_STATUS_CODE = 200
 
-# Global variable to store the Pokemon cache
+# Global variable to store the Pokémon cache
 pokemon_cache = None
 
 def fetch(url, params=None):
@@ -36,13 +36,13 @@ def fetch(url, params=None):
 
 def fetch_or_get_pokemon_cache():
     """
-    Caches all Pokemon names and URLs from the PokeAPI.
-    :return: A dictionary mapping Pokemon names to their URLs.
+    Caches all Pokémon names and URLs from the PokeAPI.
+    :return: A dictionary mapping Pokémon names to their URLs.
     """
     # Use a global variable to store the cache
     global pokemon_cache
 
-    # If the cache is empty, fetch all Pokemon and store them in the cache
+    # If the cache is empty, fetch all Pokémon and store them in the cache
     if not pokemon_cache:
         fetched_data = fetch_all_pokemon()
         pokemon_cache = {pokemon["name"]: pokemon["url"] for pokemon in fetched_data["results"]}
@@ -52,37 +52,37 @@ def fetch_or_get_pokemon_cache():
 
 def fetch_or_get_pokemon_by_name(pokemon_name):
     """
-    Fetches a Pokemon by its name from the PokeAPI.
-    :param pokemon_name: The name of the Pokemon to fetch.
+    Fetches a Pokémon by its name from the PokeAPI.
+    :param pokemon_name: The name of the Pokémon to fetch.
     :return: The JSON response from the API in dictionary format.
     """
-    # Get the URL for the given Pokemon name from the cache
+    # Get the URL for the given Pokémon name from the cache
     pokemon_url = fetch_or_get_pokemon_cache().get(pokemon_name, None)
     if not pokemon_url:
         return None
 
-    # Fetch the Pokemon data from the API
+    # Fetch the Pokémon data from the API
     return fetch(pokemon_url)
 
 def fetch_all_pokemon():
     """
-    Fetches a list of all Pokemon from the PokeAPI.
+    Fetches a list of all Pokémon from the PokeAPI.
     :return: The JSON response from the API in dictionary format.
     """
     return fetch(f"{API_URL}{ALL_POKEMON_ENDPOINT}", {"limit": ALL_POKEMON_LIMIT})
 
 def fetch_pokemon_species(pokemon_id):
     """
-    Fetches the species information for a Pokemon by its ID from the PokeAPI.
-    :param pokemon_id: The ID of the Pokemon to fetch.
+    Fetches the species information for a Pokémon by its ID from the PokeAPI.
+    :param pokemon_id: The ID of the Pokémon to fetch.
     :return: The JSON response from the API in dictionary format.
     """
     return fetch(f"{API_URL}{POKEMON_SPECIES_ENDPOINT}/{pokemon_id}")
 
 def fetch_evolution_chain(pokemon_id):
     """
-    Fetches the evolution chain for a Pokemon by its ID from the PokeAPI.
-    :param pokemon_id: The ID of the Pokemon to fetch.
+    Fetches the evolution chain for a Pokémon by its ID from the PokeAPI.
+    :param pokemon_id: The ID of the Pokémon to fetch.
     :return: The JSON response from the API in dictionary format.
     """
     species = fetch_pokemon_species(pokemon_id)

@@ -7,8 +7,8 @@ pokemon_history = []
 
 def add_to_history_file(pokemon_name):
     """
-    Adds a Pokemon name to the history file.
-    :param pokemon_name: The name of the Pokemon to add to the history.
+    Adds a Pokémon name to the history file.
+    :param pokemon_name: The name of the Pokémon to add to the history.
     """
     global pokemon_history
 

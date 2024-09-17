@@ -19,6 +19,7 @@ def print_error(message):
 def select_option(header, options, default_value = ""):
     """
     Allows the user to select an option from a list of options.
+    The default option is selected if the user doesn't enter a choice.
     :param header: The header to display.
     :param options: A list of options to choose from.
     :param default_value: The index of the default option.
@@ -37,11 +38,11 @@ def select_option(header, options, default_value = ""):
 
         # If the user didn't enter a choice, use the default
         if not choice:
-            choice = str(default_value)
+            choice = default_value
 
-        # Check if the choice is valid
-        if choice in [str(key) for key, _ in options]:
+        # Check if the choice is valid by comparing it to the keys
+        if choice in [str(key).lower() for key, _ in options]:
             return choice
 
-        # Print an error message if the choice is invalid
-        print_error("Invalid choice. Please try again.")
+        # Print an error message if the chosen option is invalid
+        print_error("Invalid option. Please try again.")
