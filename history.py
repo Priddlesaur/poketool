@@ -1,7 +1,7 @@
 import json
 
 HISTORY_FILE = "history.json"
-HISTORY_MAX_ENTRIES = 10
+HISTORY_MAX_ENTRIES = 5
 
 pokemon_history = []
 
@@ -19,10 +19,13 @@ def add_to_history_file(pokemon_name):
     # Add the Pokemon name to beginning of the history list
     pokemon_history.insert(0, pokemon_name)
 
+    # Keep only the last HISTORY_MAX_ENTRIES entries
+    pokemon_history = pokemon_history[:HISTORY_MAX_ENTRIES]
+
     # Write the updated history back to the file, but
     # only keep the last HISTORY_MAX_ENTRIES entries
     with open(HISTORY_FILE, "w") as file:
-        json.dump(pokemon_history[:HISTORY_MAX_ENTRIES], file)
+        json.dump(pokemon_history, file)
 
 def load_history_file():
     """
