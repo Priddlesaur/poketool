@@ -12,11 +12,11 @@ def add_to_history_file(pokemon_name):
     """
     global pokemon_history
 
-    # Check if the Pokemon name is already in the history
+    # Check if the Pokémon name is already in the history
     if pokemon_name in pokemon_history:
         return
 
-    # Add the Pokemon name to beginning of the history list
+    # Add the Pokémon name to beginning of the history list
     pokemon_history.insert(0, pokemon_name)
 
     # Keep only the last HISTORY_MAX_ENTRIES entries
