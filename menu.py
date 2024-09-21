@@ -148,7 +148,7 @@ def view_pokemon_stats(pokemon_data):
     Prints the stats of a Pokémon.
     :param pokemon_data: The Pokémon data to display stats for.
     """
-    print_success(f"\nStats for {pokemon_data["name"].capitalize()}:")
+    print_success(f"\n== Stats for {pokemon_data["name"].capitalize()} ==")
     print(f"Name: {pokemon_data["name"].capitalize()}")
     print(f"Height: {pokemon_data["height"]}")
     print(f"Weight: {pokemon_data["weight"]}")
