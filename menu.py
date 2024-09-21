@@ -19,6 +19,10 @@ from string_tools import (
 MAX_SUGGESTIONS = 3
 
 def show_main_menu():
+    """
+    Shows the main menu and handles the user input.
+    :return: True if the main menu should continue, False if the user wants to exit.
+    """
     # Show the main menu options
     user_input = select_option("Main Menu", [
         ("1", "Search for a Pokémon"),

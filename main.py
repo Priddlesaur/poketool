@@ -3,7 +3,7 @@ from history import load_history_file
 from menu import show_main_menu
 
 def main():
-    print_success("Welcome to the Pokemon Tool!")
+    print_success("Welcome to the Pokémon Tool!")
 
     # Load the history file
     print("Loading history...")
@@ -26,7 +26,7 @@ def main():
              (_,'
     """)
 
-    # Main application loop. Keep running until the user exits.
+    # Main application loop. The show_main_menu function returns False when the user wants to exit.
     while show_main_menu():
         pass
 
